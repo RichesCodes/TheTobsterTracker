@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Basic document metadata so the browser knows how to render the page. -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Habit Tracker</title>
+    <meta
+      name="description"
+      content="A small habit tracking app that stores daily check-ins in the browser."
+    />
+    <meta name="theme-color" content="#f2f2f7" />
+    <!-- The celebration screen uses this display font for the big NICE text. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet" />
+    <!-- All visual styling lives in style.css. -->
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!--
+      The entire app is a single-page layout.
+      JavaScript swaps views and redraws sections inside this one document.
+    -->
+    <main class="app" aria-labelledby="app-title">
+      <!-- Header with title, dark mode toggle, and previous/next day navigation. -->
+      <header class="header">
+        <div class="header-top">
+          <div>
+            <p class="eyebrow" id="eyebrow-text">Today</p>
+            <h1 id="app-title">Habits</h1>
+          </div>
+          <button id="dark-mode-toggle" class="dark-toggle" type="button" aria-label="Toggle dark mode">☾</button>
+        </div>
+        <div class="date-nav">
+          <button id="prev-day" class="nav-arrow" type="button" aria-label="Previous day">&#8249;</button>
+          <p id="today-date" class="date"></p>
+          <button id="next-day" class="nav-arrow" type="button" aria-label="Next day" disabled>&#8250;</button>
+        </div>
+      </header>
+
+      <!-- Top-level navigation between the logging view and the analytics view. -->
+      <nav class="segments" aria-label="Habit views">
+        <button class="segment active" type="button" data-view="today">Today</button>
+        <button class="segment" type="button" data-view="insights">Insights</button>
+      </nav>
+
+      <!--
+        Today view:
+        - habit yes/no flow
+        - activities
+        - mood
+        - emotions
+        - customization tools
+      -->
+      <section id="today-view" class="view active">
+        <!-- JavaScript renders one habit card at a time into this container. -->
+        <section id="habit-list" class="habit-list" aria-label="Daily habits"></section>
+
+        <!-- Activity checkboxes are rendered here as tappable buttons. -->
+        <section class="habit-card activity-card" aria-labelledby="activity-title">
+          <div>
+            <p class="card-kicker">Activities</p>
+            <h2 id="activity-title" class="section-title">What did you do today?</h2>
+          </div>
+          <div id="activity-options" class="activity-options" aria-label="Daily activities"></div>
+        </section>
+
+        <!-- Mood is a single-choice selection. -->
+        <section class="habit-card mood-card" aria-labelledby="mood-title">
+          <div>
+            <p class="card-kicker">Mood</p>
+            <h2 id="mood-title" class="section-title">How do you feel?</h2>
+          </div>
+          <div id="mood-options" class="mood-options"></div>
+        </section>
+
+        <!-- Emotions are multi-select, so several can be active at once. -->
+        <section class="habit-card emotion-card" aria-labelledby="emotion-title">
+          <div>
+            <p class="card-kicker">Emotions</p>
+            <h2 id="emotion-title" class="section-title">What came up?</h2>
+          </div>
+          <div id="emotion-options" class="emotion-options" aria-label="Daily emotions"></div>
+        </section>
+
+        <button id="finish-day" class="finish-day-button" type="button">Finish Day</button>
+        <button id="reset-today" class="reset-button" type="button">Reset Today</button>
+        <button id="customize-toggle" class="customize-button" type="button">Customize</button>
+        <!-- The customize panel is built completely in JavaScript. -->
+        <section id="customize-panel" class="customize-panel" hidden></section>
+      </section>
+
+      <!--
+        Insights view:
+        - check-in summary for the selected week/month
+        - habit summary panel
+      -->
+      <section id="insights-view" class="view" hidden>
+        <!-- The main analytics panel for period stats, calendar, and link comparisons. -->
+        <section id="checkin-panel" class="panel" aria-labelledby="checkin-title"></section>
+
+        <!-- A second analytics panel focused only on habits. -->
+        <section id="habit-summary-panel" class="panel" aria-labelledby="habit-summary-title"></section>
+      </section>
+    </main>
+
+    <!-- Celebration content is injected here when the user finishes the day. -->
+    <div id="celebration-overlay" class="celebration-overlay hidden" aria-live="assertive"></div>
+
+    <!--
+      Script order matters because these files share globals instead of using modules.
+      Constants and helpers must load before files that call them.
+    -->
+    <script src="js/constants.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/today.js"></script>
+    <script src="js/insights.js"></script>
+    <script src="js/celebration.js"></script>
+    <script src="js/demo-data.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
