@@ -1179,6 +1179,16 @@ h1 {
   transform: scale(0.95);
 }
 
+/* ---- Locked (finished) day state ---- */
+
+.mood-button:disabled,
+.activity-button:disabled,
+.emotion-button:disabled {
+  opacity: 0.45;
+  cursor: default;
+  pointer-events: none;
+}
+
 /* ---- Insights navigation ---- */
 
 .insights-nav {

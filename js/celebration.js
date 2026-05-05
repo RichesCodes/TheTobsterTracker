@@ -57,6 +57,10 @@ function showCelebrationPrompt() {
 
 // Replace the prompt with a lightweight animated celebration.
 function startCelebration(overlay) {
+  viewEntry.finished = true;
+  saveView();
+  renderAll();
+
   overlay.innerHTML = "";
 
   // Big staggered "NICE" letters.

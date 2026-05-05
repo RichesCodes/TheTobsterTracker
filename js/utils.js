@@ -43,6 +43,7 @@ function createEmptyEntry() {
     mood: null,
     activities: {},
     emotions: {},
+    finished: false,
     updatedAt: null,
   };
 }
@@ -76,6 +77,7 @@ function normalizeEntry(raw) {
     });
   }
 
+  entry.finished = raw.finished === true;
   entry.updatedAt = typeof raw.updatedAt === "string" ? raw.updatedAt : null;
 
   return entry;

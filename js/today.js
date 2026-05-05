@@ -155,6 +155,7 @@ function renderMood() {
     const label = document.createElement("span");
     label.textContent = mood.label;
 
+    button.disabled = Boolean(viewEntry.finished);
     button.append(emoji, label);
     // Mood is a one-of-many selection, so clicking replaces the previous value.
     button.addEventListener("click", () => {
@@ -189,6 +190,7 @@ function renderActivities() {
     const label = document.createElement("span");
     label.textContent = activity.name;
 
+    button.disabled = Boolean(viewEntry.finished);
     button.append(emoji, label);
     button.addEventListener("click", () => {
       toggleActivity(activity.id);
@@ -231,6 +233,7 @@ function renderEmotions() {
     const label = document.createElement("span");
     label.textContent = emotion.name;
 
+    button.disabled = Boolean(viewEntry.finished);
     button.append(emoji, label);
     button.addEventListener("click", () => {
       toggleEmotion(emotion.id);

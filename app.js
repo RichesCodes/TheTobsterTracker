@@ -131,9 +131,12 @@ segmentButtons.forEach((button) => {
 
 // ---- Finish day ----
 
-// Manually open the "done logging" flow.
+// Mark the day as finished, lock the mood/activity/emotion sections, then celebrate.
 finishDayBtn.addEventListener("click", () => {
+  viewEntry.finished = true;
+  saveView();
   celebrationTriggered = true;
+  renderAll();
   showCelebrationPrompt();
 });
 
@@ -211,6 +214,7 @@ function renderAll() {
   renderEmotions();
   renderCustomizePanel();
   renderInsights();
+  finishDayBtn.hidden = Boolean(viewEntry.finished);
 }
 
 // ---- Dark mode helpers ----
