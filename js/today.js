@@ -373,6 +373,7 @@ function renderCustomizePanel() {
       onAdd: (name) => addCustomMood(name, selectedMoodEmoji, selectedMoodScore),
     }))
   );
+  customizePanel.append(buildDataSection());
   customizePanel.append(buildTestingSection());
 }
 
@@ -544,6 +545,56 @@ function buildMoodScorePicker(getScore, setScore) {
   });
 
   return wrapper;
+}
+
+// Small admin/testing area for loading demo data or wiping all storage.
+function buildDataSection() {
+  const details = document.createElement("details");
+  details.className = "customize-section";
+
+  const summary = document.createElement("summary");
+  summary.className = "customize-summary";
+
+  const title = document.createElement("span");
+  title.textContent = "Data";
+
+  const count = document.createElement("span");
+  count.className = "customize-count";
+  count.textContent = "backup";
+
+  summary.append(title, count);
+
+  const body = document.createElement("div");
+  body.className = "customize-section-body";
+
+  const card = document.createElement("div");
+  card.className = "test-tools-card";
+
+  const exportBtn = document.createElement("button");
+  exportBtn.className = "test-tool-button";
+  exportBtn.type = "button";
+  exportBtn.textContent = "Download Backup";
+  exportBtn.addEventListener("click", downloadBackupFile);
+
+  card.append(exportBtn);
+  body.append(card);
+  details.append(summary, body);
+  return details;
+}
+
+// Create and download a JSON backup of all app-owned data.
+function downloadBackupFile() {
+  const payload = buildBackupPayload();
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = `tobster-tracker-backup-${todayKey}.json`;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
 }
 
 // Small admin/testing area for loading demo data or wiping all storage.

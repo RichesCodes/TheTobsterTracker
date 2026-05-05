@@ -120,7 +120,6 @@ function renderCheckinSection(periodDates, periodEntries, storedByDate) {
   checkinPanel.append(statsGrid);
   checkinPanel.append(buildCalendar(periodDates, storedByDate));
 
-  checkinPanel.append(buildPeriodTaskCounts(periodDates, storedByDate));
   checkinPanel.append(buildInsightLinks(periodEntries));
 }
 

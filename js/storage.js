@@ -209,3 +209,21 @@ function mergeConfigLists(primary, extras) {
 function generateId(prefix = "item") {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
 }
+
+// Build a portable JSON-friendly backup of all app-owned data in localStorage.
+function buildBackupPayload() {
+  return {
+    app: "TobsterTracker",
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    theme: localStorage.getItem("theme"),
+    habits: loadHabitsConfig(),
+    activities: loadActivitiesConfig(),
+    emotions: loadEmotionsConfig(),
+    moods: loadMoodsConfig(),
+    days: getStoredDays().map((day) => ({
+      dateKey: day.dateKey,
+      entry: day.entry,
+    })),
+  };
+}
