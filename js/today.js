@@ -142,17 +142,18 @@ function renderMood() {
     const button = document.createElement("button");
     const isSelected = viewEntry.mood === mood.id;
 
-    button.className = "mood-button";
+    button.className = "mood-button tile-button";
     button.type = "button";
     button.setAttribute("aria-pressed", String(isSelected));
     button.classList.toggle("selected", isSelected);
 
     const emoji = document.createElement("span");
-    emoji.className = "mood-emoji";
+    emoji.className = "mood-emoji tile-emoji";
     emoji.setAttribute("aria-hidden", "true");
     emoji.textContent = mood.emoji;
 
     const label = document.createElement("span");
+    label.className = "tile-label";
     label.textContent = mood.label;
 
     button.disabled = Boolean(viewEntry.finished);
@@ -177,17 +178,18 @@ function renderActivities() {
     const button = document.createElement("button");
     const isSelected = Boolean(viewEntry.activities[activity.id]);
 
-    button.className = "activity-button";
+    button.className = "activity-button tile-button";
     button.type = "button";
     button.setAttribute("aria-pressed", String(isSelected));
     button.classList.toggle("selected", isSelected);
 
     const emoji = document.createElement("span");
-    emoji.className = "activity-emoji";
+    emoji.className = "tile-emoji";
     emoji.setAttribute("aria-hidden", "true");
     emoji.textContent = activity.emoji || CUSTOM_ACTIVITY_EMOJI;
 
     const label = document.createElement("span");
+    label.className = "tile-label";
     label.textContent = activity.name;
 
     button.disabled = Boolean(viewEntry.finished);
@@ -220,17 +222,18 @@ function renderEmotions() {
     const button = document.createElement("button");
     const isSelected = Boolean(viewEntry.emotions[emotion.id]);
 
-    button.className = "emotion-button";
+    button.className = "emotion-button tile-button";
     button.type = "button";
     button.setAttribute("aria-pressed", String(isSelected));
     button.classList.toggle("selected", isSelected);
 
     const emoji = document.createElement("span");
-    emoji.className = "emotion-emoji";
+    emoji.className = "tile-emoji";
     emoji.setAttribute("aria-hidden", "true");
     emoji.textContent = emotion.emoji || CUSTOM_EMOTION_EMOJI;
 
     const label = document.createElement("span");
+    label.className = "tile-label";
     label.textContent = emotion.name;
 
     button.disabled = Boolean(viewEntry.finished);

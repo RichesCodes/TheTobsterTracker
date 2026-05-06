@@ -12,9 +12,14 @@ const MOODS_KEY = "habits:moods-config";
 
 // Default habits shown to every new user.
 const DEFAULT_HABITS = [
-  { id: "brush-teeth", name: "Brush Teeth", emoji: "\u{1FAA5}" },
+  { id: "teethmorning", name: "Brush Teeth - Morning", emoji: "\u{1F9B7}" },
+  { id: "morning-pills", name: "Take Morning Drugs", emoji: "\u{1F48A}" },
+  { id: "eat-breakfast", name: "Eat Breakfast", emoji: "\u{1F373}" },
   { id: "drink-water", name: "Drink Water", emoji: "\u{1F4A7}" },
-  { id: "take-vitamins", name: "Take Vitamins", emoji: "\u{1F48A}" },
+  { id: "eat-lunch", name: "Eat Lunch", emoji: "\u{1F96A}" },
+  { id: "afternoon-pills", name: "Take Afternoon Drugs", emoji: "\u{1F48A}" },
+  { id: "eat-dinner", name: "Eat Dinner", emoji: "\u{1F969}" },
+  { id: "teethnight", name: "Brush Teeth - Night", emoji: "\u{1F9B7}" },
 ];
 
 // Default daily activities used for check-ins and future insights.
@@ -35,7 +40,6 @@ const DEFAULT_EMOTIONS = [
   { id: "angry", name: "Angry", emoji: "\u{1F620}" },
   { id: "horny", name: "Horny", emoji: "\u{1F60F}" },
   { id: "sad", name: "Sad", emoji: "\u{1F61E}" },
-  { id: "Butthold", name: "Buttholeee", emoji: "\u{1F61E}" },
 ];
 
 const CUSTOM_EMOTION_EMOJI = "\u{1F4AD}";

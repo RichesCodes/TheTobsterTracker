@@ -60,6 +60,7 @@ html {
 body {
   min-height: 100vh;
   margin: 0;
+  overflow-x: hidden;
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
     "Helvetica Neue", Arial, sans-serif;
@@ -74,7 +75,8 @@ button {
 }
 
 .app {
-  width: min(100%, 420px);
+  width: 100%;
+  max-width: 420px;
   min-height: 100vh;
   margin: 0 auto;
   padding: 28px 18px 24px;
@@ -83,7 +85,7 @@ button {
 /* ---- Header ---- */
 
 .header {
-  padding: 10px 2px 0;
+  padding: 10px 0 0;
 }
 
 .header-top {
@@ -196,6 +198,12 @@ h1 {
 .view {
   display: grid;
   gap: 12px;
+  /* Prevent any grid item from blowing past the app container width. */
+  min-width: 0;
+}
+
+.view > * {
+  min-width: 0;
 }
 
 .view[hidden] {
@@ -207,6 +215,7 @@ h1 {
 .habit-list {
   display: grid;
   gap: 12px;
+  min-width: 0;
 }
 
 .habit-card,
@@ -330,8 +339,7 @@ h1 {
   gap: 10px;
 }
 
-.answer-button,
-.mood-button {
+.answer-button {
   min-height: 54px;
   border-radius: 16px;
   color: var(--text);
@@ -343,14 +351,12 @@ h1 {
 }
 
 .answer-button:active,
-.mood-button:active,
 .finish-day-button:active,
 .reset-button:active {
   transform: scale(0.97);
 }
 
-.answer-button.selected,
-.mood-button.selected {
+.answer-button.selected {
   color: #ffffff;
   transform: scale(1.02);
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
@@ -362,6 +368,48 @@ h1 {
 
 .answer-button.selected[data-answer="no"] {
   background: var(--no);
+}
+
+/* ---- Shared tile button (mood, activity, emotion) ---- */
+/*
+ * .tile-button is the single source of truth for tile layout.
+ * Three-column grid: [emoji] [label] [mirror spacer].
+ * The mirror spacer equals the emoji column width so the label
+ * column is symmetric and text-align:center lands in the visual middle.
+ */
+
+.tile-button {
+  display: grid;
+  grid-template-columns: 26px 1fr 26px;
+  align-content: center;
+  gap: 6px;
+  padding: 10px 10px;
+  border-radius: 16px;
+  color: var(--text);
+  background: var(--button);
+  font-weight: 800;
+  transition: transform 160ms ease, background-color 160ms ease, color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.tile-button:active {
+  transform: scale(0.97);
+}
+
+.tile-button.selected {
+  color: #ffffff;
+  transform: scale(1.02);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+}
+
+.tile-emoji {
+  font-size: 18px;
+  line-height: 1;
+  text-align: center;
+}
+
+.tile-label {
+  text-align: center;
 }
 
 /* ---- Mood card ---- */
@@ -381,45 +429,19 @@ h1 {
 .emotion-options {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  align-items: stretch;
   gap: 8px;
 }
 
 .activity-button,
 .emotion-button {
-  display: flex;
   min-height: 52px;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 8px 10px;
-  border-radius: 16px;
-  color: var(--text);
-  background: var(--button);
   font-size: 15px;
-  font-weight: 800;
-  text-align: center;
-  transition: transform 160ms ease, background-color 160ms ease, color 160ms ease,
-    box-shadow 160ms ease;
-}
-
-.activity-button:active,
-.emotion-button:active {
-  transform: scale(0.97);
 }
 
 .activity-button.selected,
 .emotion-button.selected {
-  color: #ffffff;
   background: var(--accent);
-  transform: scale(1.02);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
-}
-
-.activity-emoji,
-.emotion-emoji {
-  flex-shrink: 0;
-  font-size: 18px;
-  line-height: 1;
 }
 
 .activity-form {
@@ -489,16 +511,17 @@ h1 {
 
 .mood-options {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
   gap: 8px;
 }
 
 .mood-button {
-  display: grid;
+  /* Override tile-button's horizontal 3-col layout with a vertical stack. */
+  grid-template-columns: 1fr;
+  justify-items: center;
   gap: 4px;
   min-height: 68px;
-  padding: 8px 4px;
-  place-items: center;
+  padding: 8px 6px;
   font-size: 12px;
 }
 
@@ -507,10 +530,13 @@ h1 {
 }
 
 .mood-emoji {
-  width: 30px;
-  height: 30px;
+  width: 26px;
+  height: 26px;
   background: var(--mood-emoji-bg);
-  font-size: 18px;
+  font-size: 16px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
 }
 
 /* ---- Reset button ---- */
