@@ -345,6 +345,7 @@ function renderCustomizePanel() {
       getEmoji: () => selectedHabitEmoji,
       setEmoji: (emoji) => { selectedHabitEmoji = emoji; },
       onAdd: (name) => addHabit(name, selectedHabitEmoji),
+      validate: (name, emoji) => validateHabitFields(name, emoji, habits),
     }))
   );
   customizePanel.append(
@@ -354,6 +355,7 @@ function renderCustomizePanel() {
       getEmoji: () => selectedActivityEmoji,
       setEmoji: (emoji) => { selectedActivityEmoji = emoji; },
       onAdd: (name) => addCustomActivity(name, selectedActivityEmoji),
+      validate: (name, emoji) => validateActivityFields(name, emoji, activities),
     }))
   );
   customizePanel.append(
@@ -363,6 +365,7 @@ function renderCustomizePanel() {
       getEmoji: () => selectedEmotionEmoji,
       setEmoji: (emoji) => { selectedEmotionEmoji = emoji; },
       onAdd: (name) => addCustomEmotion(name, selectedEmotionEmoji),
+      validate: (name, emoji) => validateEmotionFields(name, emoji, emotions),
     }))
   );
   customizePanel.append(
@@ -374,6 +377,7 @@ function renderCustomizePanel() {
       getScore: () => selectedMoodScore,
       setScore: (score) => { selectedMoodScore = score; },
       onAdd: (name) => addCustomMood(name, selectedMoodEmoji, selectedMoodScore),
+      validate: (name, emoji, score) => validateMoodFields(name, emoji, score, moods),
     }))
   );
   customizePanel.append(buildDataSection());
@@ -451,7 +455,7 @@ function buildConfigRow(item, labelField, onRemove) {
 }
 
 // Reusable add form for habits, activities, emotions, and moods.
-function buildAddConfigForm({ labelText, placeholder, getEmoji, setEmoji, onAdd, getScore, setScore }) {
+function buildAddConfigForm({ labelText, placeholder, getEmoji, setEmoji, onAdd, getScore, setScore, validate }) {
   const card = document.createElement("form");
   card.className = "add-habit-card";
 
@@ -476,9 +480,14 @@ function buildAddConfigForm({ labelText, placeholder, getEmoji, setEmoji, onAdd,
   addBtn.textContent = "+";
   addBtn.disabled = true;
 
-  // Only enable the add button when the user has typed something real.
+  const errorEl = document.createElement("p");
+  errorEl.className = "field-error";
+  errorEl.setAttribute("aria-live", "polite");
+  errorEl.hidden = true;
+
   input.addEventListener("input", () => {
     addBtn.disabled = input.value.trim().length === 0;
+    errorEl.hidden = true;
   });
 
   inputRow.append(input, addBtn);
@@ -488,11 +497,26 @@ function buildAddConfigForm({ labelText, placeholder, getEmoji, setEmoji, onAdd,
     card.append(buildMoodScorePicker(getScore, setScore));
   }
 
-  card.append(inputRow);
-  // Form submission calls the provided "onAdd" behavior for that section.
+  card.append(inputRow, errorEl);
+
   card.addEventListener("submit", (event) => {
     event.preventDefault();
+
+    if (validate) {
+      const score = getScore ? getScore() : undefined;
+      const error = validate(input.value, getEmoji(), score);
+      if (error) {
+        errorEl.textContent = error;
+        errorEl.hidden = false;
+        input.focus();
+        return;
+      }
+    }
+
+    errorEl.hidden = true;
     onAdd(input.value);
+    input.value = "";
+    addBtn.disabled = true;
   });
 
   return card;
@@ -653,7 +677,7 @@ function buildTestingSection() {
 
 // Add a brand new habit to the config list.
 function addHabit(name, emoji) {
-  habits.push({ id: generateId("habit"), name, emoji });
+  habits.push(createHabitModel(name, emoji));
   saveHabitsConfig();
   initFlowStep();
   renderAll();

@@ -75,6 +75,29 @@ function startCelebration(overlay) {
     niceRow.append(span);
   });
 
+  // Custom image with a speech bubble — drop celebration.png or celebration.jpg into img/.
+  const celebImgWrapper = document.createElement("div");
+  celebImgWrapper.className = "celebration-image-wrapper";
+
+  const speechBubble = document.createElement("div");
+  speechBubble.className = "celebration-bubble";
+  speechBubble.textContent = "wow great job!";
+
+  const celebImg = document.createElement("img");
+  celebImg.className = "celebration-image";
+  celebImg.alt = "";
+  celebImg.setAttribute("aria-hidden", "true");
+  celebImg.onerror = () => {
+    if (celebImg.src.endsWith(".png")) {
+      celebImg.src = "img/celebration.jpg";
+    } else {
+      celebImgWrapper.remove();
+    }
+  };
+  celebImg.src = "img/celebration.png";
+
+  celebImgWrapper.append(speechBubble, celebImg);
+
   // Thumbs up appears after the letters.
   const thumbsRow = document.createElement("div");
   thumbsRow.className = "nice-thumbs";
@@ -106,5 +129,5 @@ function startCelebration(overlay) {
   closeBtn.textContent = "Keep it up! 💪";
   closeBtn.addEventListener("click", () => overlay.classList.add("hidden"));
 
-  overlay.append(niceRow, thumbsRow, eagleContainer, closeBtn);
+  overlay.append(niceRow, celebImgWrapper, thumbsRow, eagleContainer, closeBtn);
 }

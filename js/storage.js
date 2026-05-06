@@ -130,8 +130,11 @@ function loadConfigList(key, defaults, nameField, includeScore = false) {
 
   try {
     const parsed = JSON.parse(saved);
-    if (Array.isArray(parsed) && parsed.every((item) => isValidConfigItem(item, nameField, includeScore))) {
-      return parsed.map((item) => normalizeConfigItem(item, nameField, includeScore));
+    if (Array.isArray(parsed)) {
+      const valid = parsed
+        .filter((item) => isValidConfigItem(item, nameField, includeScore))
+        .map((item) => normalizeConfigItem(item, nameField, includeScore));
+      if (valid.length > 0) return valid;
     }
   } catch {
     // fall through

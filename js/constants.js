@@ -35,6 +35,7 @@ const DEFAULT_EMOTIONS = [
   { id: "angry", name: "Angry", emoji: "\u{1F620}" },
   { id: "horny", name: "Horny", emoji: "\u{1F60F}" },
   { id: "sad", name: "Sad", emoji: "\u{1F61E}" },
+  { id: "Butthold", name: "Buttholeee", emoji: "\u{1F61E}" },
 ];
 
 const CUSTOM_EMOTION_EMOJI = "\u{1F4AD}";
