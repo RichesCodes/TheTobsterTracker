@@ -40,19 +40,54 @@ function showCelebrationPrompt() {
   yesBtn.textContent = "Yes! 🎉";
   yesBtn.addEventListener("click", () => startCelebration(overlay));
 
-  // "Not yet" closes the prompt and allows it to trigger again later.
+  // "Not yet" shows a gentle nudge before closing.
   const noBtn = document.createElement("button");
   noBtn.className = "celebration-no-btn";
   noBtn.type = "button";
   noBtn.textContent = "Not yet";
-  noBtn.addEventListener("click", () => {
-    overlay.classList.add("hidden");
-    celebrationTriggered = false;
-  });
+  noBtn.addEventListener("click", () => startNagAnimation(overlay));
 
   btnRow.append(yesBtn, noBtn);
   card.append(question, btnRow);
   overlay.append(card);
+}
+
+// Show a nudge screen when the user says they're not done yet.
+function startNagAnimation(overlay) {
+  overlay.innerHTML = "";
+
+  const nagImgWrapper = document.createElement("div");
+  nagImgWrapper.className = "celebration-image-wrapper";
+
+  const speechBubble = document.createElement("div");
+  speechBubble.className = "celebration-bubble nag-bubble";
+  speechBubble.textContent = "Whats taking you so long bitch?";
+
+  const nagImg = document.createElement("img");
+  nagImg.className = "celebration-image";
+  nagImg.alt = "";
+  nagImg.setAttribute("aria-hidden", "true");
+  nagImg.onerror = () => {
+    if (nagImg.src.endsWith(".png")) {
+      nagImg.src = "img/celebration.jpg";
+    } else {
+      nagImgWrapper.remove();
+    }
+  };
+  nagImg.src = "img/celebration.png";
+
+  nagImgWrapper.append(speechBubble, nagImg);
+
+  const closeBtn = document.createElement("button");
+  closeBtn.className = "celebration-close-btn nag-close-btn";
+  closeBtn.type = "button";
+  closeBtn.textContent = "I'm a bad girl... 😔";
+  closeBtn.addEventListener("click", () => {
+    overlay.classList.add("hidden");
+    celebrationTriggered = false;
+  });
+
+  overlay.append(nagImgWrapper, closeBtn);
 }
 
 // Replace the prompt with a lightweight animated celebration.

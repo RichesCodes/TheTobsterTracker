@@ -1296,10 +1296,10 @@ h1 {
 /* Celebration image */
 
 .celebration-image-wrapper {
-  display: flex;
-  align-items: flex-end;
+  position: relative;
+  padding-top: 90px;
+  display: inline-flex;
   justify-content: center;
-  gap: 10px;
   opacity: 0;
   animation: pop-in 500ms cubic-bezier(0.175, 0.885, 0.32, 1.275) 480ms forwards;
 }
@@ -1311,26 +1311,43 @@ h1 {
 }
 
 .celebration-bubble {
-  position: relative;
+  position: absolute;
+  top: 0;
+  right: -24px;
+  width: 148px;
   padding: 10px 14px;
-  border-radius: 18px 18px 18px 4px;
+  border-radius: 18px 18px 4px 18px;
   background: #ffffff;
   color: #111111;
   font-size: 15px;
   font-weight: 700;
-  white-space: nowrap;
+  line-height: 1.35;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-  margin-bottom: 16px;
 }
 
 .celebration-bubble::after {
   content: "";
   position: absolute;
   bottom: -8px;
-  left: 16px;
+  right: 75px;
   border: 8px solid transparent;
   border-top-color: #ffffff;
   border-bottom: 0;
+}
+
+.nag-bubble {
+  background: var(--no);
+  color: #ffffff;
+  border-radius: 18px 18px 4px 18px;
+}
+
+.nag-bubble::after {
+  border-top-color: var(--no);
+}
+
+.nag-close-btn {
+  background: var(--button);
+  color: var(--text);
 }
 
 /* NICE letters */

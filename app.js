@@ -131,12 +131,9 @@ segmentButtons.forEach((button) => {
 
 // ---- Finish day ----
 
-// Mark the day as finished, lock the mood/activity/emotion sections, then celebrate.
+// Open the celebration prompt; startCelebration() handles marking finished and locking sections.
 finishDayBtn.addEventListener("click", () => {
-  viewEntry.finished = true;
-  saveView();
   celebrationTriggered = true;
-  renderAll();
   showCelebrationPrompt();
 });
 
