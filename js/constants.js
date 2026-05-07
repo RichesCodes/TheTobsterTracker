@@ -12,14 +12,51 @@ const MOODS_KEY = "habits:moods-config";
 
 // Default habits shown to every new user.
 const DEFAULT_HABITS = [
-  { id: "teethmorning", name: "Brush Teeth - Morning", emoji: "\u{1F9B7}" },
-  { id: "morning-pills", name: "Take Morning Drugs", emoji: "\u{1F48A}" },
-  { id: "eat-breakfast", name: "Eat Breakfast", emoji: "\u{1F373}" },
-  { id: "drink-water", name: "Drink Water", emoji: "\u{1F4A7}" },
-  { id: "eat-lunch", name: "Eat Lunch", emoji: "\u{1F96A}" },
-  { id: "afternoon-pills", name: "Take Afternoon Drugs", emoji: "\u{1F48A}" },
-  { id: "eat-dinner", name: "Eat Dinner", emoji: "\u{1F969}" },
-  { id: "teethnight", name: "Brush Teeth - Night", emoji: "\u{1F9B7}" },
+  // Morning routine
+  { id: "wake-up", name: "Wake Up", emoji: "⏰", group: "am" },
+  { id: "dogs-out-am", name: "Let Dogs Out (AM)", emoji: "\u{1F43E}", group: "am" },
+  { id: "morning-pills", name: "Take Morning Meds", emoji: "\u{1F48A}", group: "am" },
+  { id: "start-coffee", name: "Start Coffee", emoji: "☕", group: "am" },
+  { id: "potty-pad-litter", name: "Clean Potty Pad & Litter", emoji: "\u{1F9F9}", group: "am" },
+  { id: "drink-coffee", name: "Drink Coffee", emoji: "\u{1FAD6}", group: "am" },
+  { id: "eat-breakfast", name: "Eat Breakfast", emoji: "\u{1F373}", group: "am" },
+  { id: "write-todo", name: "Write Daily To-Do List", emoji: "\u{1F4DD}", group: "am" },
+  { id: "teethmorning", name: "Brush Teeth (AM)", emoji: "\u{1F9B7}", group: "am" },
+  { id: "floss-string", name: "Floss - String", emoji: "\u{1FAA5}", group: "am" },
+  { id: "floss-water", name: "Floss - Water", emoji: "\u{1F4A7}", group: "am" },
+  { id: "scrape-tongue", name: "Scrape Tongue", emoji: "\u{1F9FC}", group: "am" },
+  { id: "mouthwash", name: "Mouthwash", emoji: "\u{1FAE7}", group: "am" },
+  { id: "face-wash", name: "Face Wash", emoji: "\u{1F9FC}", group: "am" },
+  { id: "toner-serum", name: "Toner / Serum", emoji: "✨", group: "am" },
+  { id: "moisturize-face", name: "Moisturize Face", emoji: "\u{1F9F4}", group: "am" },
+  { id: "lip-balm", name: "Lip Balm", emoji: "\u{1F48B}", group: "am" },
+  { id: "deodorant", name: "Deodorant", emoji: "\u{1F338}", group: "am" },
+  { id: "brush-hair-am", name: "Brush Hair (AM)", emoji: "\u{1FAB8}", group: "am" },
+  { id: "get-dressed", name: "Get Dressed", emoji: "\u{1F455}", group: "am" },
+  { id: "make-bed", name: "Make Bed", emoji: "\u{1F6CF}\u{FE0F}", group: "am" },
+  { id: "quick-tidy", name: "Pick Up House (Quick Tidy)", emoji: "\u{1F3E0}", group: "am" },
+  { id: "start-day", name: "Start Day", emoji: "\u{1F680}", group: "am" },
+
+  // Midday
+  { id: "drink-water", name: "Drink Water", emoji: "\u{1F4A7}", group: "midday" },
+  { id: "eat-lunch", name: "Eat Lunch", emoji: "\u{1F96A}", group: "midday" },
+  { id: "afternoon-pills", name: "Take Afternoon Meds", emoji: "\u{1F48A}", group: "midday" },
+
+  // Evening routine
+  { id: "eat-dinner", name: "Eat Dinner", emoji: "\u{1F969}", group: "pm" },
+
+  { id: "dishes", name: "Dishes - Wash & Dry", emoji: "\u{1F37D}\u{FE0F}", group: "pm" },
+  { id: "set-coffee-maker", name: "Set Coffee Maker", emoji: "⏲\u{FE0F}", group: "pm" },
+  { id: "dogs-out-pm", name: "Let Dogs Out (PM)", emoji: "\u{1F43E}", group: "pm" },
+  { id: "fresh-potty-pad", name: "Put Out Fresh Potty Pad", emoji: "\u{1F415}", group: "pm" },
+  { id: "teethnight", name: "Brush Teeth (PM)", emoji: "\u{1F9B7}", group: "pm" },
+  { id: "take-shower", name: "Take Shower", emoji: "\u{1F6BF}", group: "pm" },
+  { id: "night-skincare", name: "Night Skincare", emoji: "\u{1F319}", group: "pm" },
+  { id: "lotion-body", name: "Lotion Body", emoji: "\u{1F9F4}", group: "pm" },
+  { id: "brush-hair-pm", name: "Brush Hair (PM)", emoji: "\u{1FAB8}", group: "pm" },
+  { id: "put-on-pjs", name: "Put On PJs", emoji: "\u{1F634}", group: "pm" },
+  { id: "dogs-out-late", name: "Let Dogs Out (Late Night)", emoji: "\u{1F43E}", group: "pm" },
+  { id: "get-in-bed", name: "Get In Bed", emoji: "\u{1F6CF}\u{FE0F}", group: "pm" },
 ];
 
 // Default daily activities used for check-ins and future insights.

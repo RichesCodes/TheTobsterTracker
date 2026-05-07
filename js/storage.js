@@ -163,6 +163,16 @@ function normalizeConfigItem(item, nameField, includeScore) {
     normalized.score = Math.max(0, Math.min(5, Number(item.score)));
   }
 
+  if (item.disabled === true) {
+    normalized.disabled = true;
+  }
+
+  if (typeof item.group === "string" && ["am", "midday", "pm"].includes(item.group)) {
+    normalized.group = item.group;
+  } else {
+    normalized.group = "am";
+  }
+
   return normalized;
 }
 

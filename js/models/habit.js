@@ -18,11 +18,12 @@ function validateHabitFields(name, emoji, existingItems = []) {
   return null;
 }
 
-function createHabitModel(name, emoji) {
+function createHabitModel(name, emoji, group = "am") {
   return {
     id:        generateId("habit"),
     name:      name.trim(),
     emoji,
+    group,
     createdAt: new Date().toISOString(),
   };
 }

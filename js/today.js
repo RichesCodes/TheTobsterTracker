@@ -7,8 +7,15 @@
 function renderHabitFlow() {
   habitFlowEl.innerHTML = "";
   habitFlowEl.className = "habit-flow";
+
+  const active = getActiveHabits();
+
   if (habits.length === 0) {
     habitFlowEl.append(createEmptyState("No habits yet. Tap Customize below to add one."));
+    return;
+  }
+  if (active.length === 0) {
+    habitFlowEl.append(createEmptyState("All habits are hidden. Enable some in Customize below."));
     return;
   }
 
@@ -16,7 +23,7 @@ function renderHabitFlow() {
   dotsRow.className = "habit-progress";
   dotsRow.setAttribute("aria-hidden", "true");
 
-  habits.forEach((habit, index) => {
+  active.forEach((habit, index) => {
     const dot = document.createElement("span");
     dot.className = "progress-dot";
     if (viewEntry.answers[habit.id]) {
@@ -29,13 +36,13 @@ function renderHabitFlow() {
 
   habitFlowEl.append(dotsRow);
 
-  const allAnswered = habits.every((h) => viewEntry.answers[h.id]);
-  if (allAnswered || flowStep > habits.length) {
+  const allAnswered = active.every((h) => viewEntry.answers[h.id]);
+  if (allAnswered || flowStep > active.length) {
     habitFlowEl.append(buildDoneCard());
     return;
   }
 
-  habitFlowEl.append(buildHabitCard(habits[flowStep]));
+  habitFlowEl.append(buildHabitCard(active[flowStep]));
 }
 
 // Build the yes/no card for a single habit.
@@ -88,8 +95,9 @@ function buildHabitCard(habit) {
 
 // Build the "all done" card shown after every habit has an answer.
 function buildDoneCard() {
-  const yesCount = habits.filter((h) => viewEntry.answers[h.id] === "yes").length;
-  const total = habits.length;
+  const active = getActiveHabits();
+  const yesCount = active.filter((h) => viewEntry.answers[h.id] === "yes").length;
+  const total = active.length;
 
   const card = document.createElement("div");
   card.className = "all-done-card";
@@ -112,26 +120,28 @@ function buildDoneCard() {
 
 // Move flowStep to the next unanswered habit.
 function advanceFlow() {
-  for (let i = flowStep + 1; i < habits.length; i++) {
-    if (!viewEntry.answers[habits[i].id]) {
+  const active = getActiveHabits();
+  for (let i = flowStep + 1; i < active.length; i++) {
+    if (!viewEntry.answers[active[i].id]) {
       flowStep = i;
       renderAll();
       return;
     }
   }
-  flowStep = habits.length + 1;
+  flowStep = active.length + 1;
   renderAll();
 }
 
 // When the page loads or the day changes, start on the first unanswered habit.
 function initFlowStep() {
-  for (let i = 0; i < habits.length; i++) {
-    if (!viewEntry.answers[habits[i].id]) {
+  const active = getActiveHabits();
+  for (let i = 0; i < active.length; i++) {
+    if (!viewEntry.answers[active[i].id]) {
       flowStep = i;
       return;
     }
   }
-  flowStep = habits.length + 1;
+  flowStep = active.length + 1;
 }
 
 // Render the single-choice mood selector.
@@ -341,16 +351,7 @@ function renderCustomizePanel() {
 
   header.append(title, doneBtn);
   customizePanel.append(header);
-  customizePanel.append(
-    buildCustomizeSection("Habits", habits, "name", removeHabit, buildAddConfigForm({
-      labelText: "Add a habit",
-      placeholder: "Habit name...",
-      getEmoji: () => selectedHabitEmoji,
-      setEmoji: (emoji) => { selectedHabitEmoji = emoji; },
-      onAdd: (name) => addHabit(name, selectedHabitEmoji),
-      validate: (name, emoji) => validateHabitFields(name, emoji, habits),
-    }))
-  );
+  customizePanel.append(buildHabitsSection());
   customizePanel.append(
     buildCustomizeSection("Activities", activities, "name", removeActivity, buildAddConfigForm({
       labelText: "Add an activity",
@@ -387,8 +388,57 @@ function renderCustomizePanel() {
   customizePanel.append(buildTestingSection());
 }
 
+// Outer "Habits" section containing collapsible AM / Midday / PM subsections.
+function buildHabitsSection() {
+  const details = document.createElement("details");
+  details.className = "customize-section";
+  details.open = openCustomizeSections.has("Habits");
+  details.addEventListener("toggle", () => {
+    if (details.open) openCustomizeSections.add("Habits");
+    else openCustomizeSections.delete("Habits");
+  });
+
+  const summary = document.createElement("summary");
+  summary.className = "customize-summary";
+
+  const titleEl = document.createElement("span");
+  titleEl.textContent = "Habits";
+
+  const activeCount = habits.filter((h) => !h.disabled).length;
+  const count = document.createElement("span");
+  count.className = "customize-count";
+  count.textContent = `${activeCount} / ${habits.length}`;
+
+  summary.append(titleEl, count);
+  details.append(summary);
+
+  const body = document.createElement("div");
+  body.className = "customize-section-body";
+
+  [
+    { key: "am",     title: "AM Routine" },
+    { key: "midday", title: "Midday"     },
+    { key: "pm",     title: "PM Routine" },
+  ].forEach(({ key, title }) => {
+    const groupHabits = habits.filter((h) => (h.group || "am") === key);
+    const subsection = buildCustomizeSection(title, groupHabits, "name", removeHabit, buildAddConfigForm({
+      labelText: `Add to ${title}`,
+      placeholder: "Habit name...",
+      getEmoji: () => selectedHabitEmoji,
+      setEmoji: (emoji) => { selectedHabitEmoji = emoji; },
+      onAdd: (name) => addHabit(name, selectedHabitEmoji, key),
+      validate: (name, emoji) => validateHabitFields(name, emoji, habits),
+    }), toggleHabit);
+    subsection.classList.add("customize-subsection");
+    body.append(subsection);
+  });
+
+  details.append(body);
+  return details;
+}
+
 // One collapsible customize section, such as Habits or Activities.
-function buildCustomizeSection(title, items, labelField, onRemove, addForm) {
+function buildCustomizeSection(title, items, labelField, onRemove, addForm, onToggle = null) {
   const details = document.createElement("details");
   details.className = "customize-section";
   details.open = openCustomizeSections.has(title);
@@ -408,7 +458,12 @@ function buildCustomizeSection(title, items, labelField, onRemove, addForm) {
 
   const count = document.createElement("span");
   count.className = "customize-count";
-  count.textContent = String(items.length);
+  if (onToggle) {
+    const activeCount = items.filter((i) => !i.disabled).length;
+    count.textContent = `${activeCount} / ${items.length}`;
+  } else {
+    count.textContent = String(items.length);
+  }
 
   summary.append(titleEl, count);
   details.append(summary);
@@ -423,7 +478,7 @@ function buildCustomizeSection(title, items, labelField, onRemove, addForm) {
     list.append(createEmptyState(`No ${title.toLowerCase()} yet.`));
   } else {
     items.forEach((item) => {
-      list.append(buildConfigRow(item, labelField, onRemove));
+      list.append(buildConfigRow(item, labelField, onRemove, onToggle));
     });
   }
 
@@ -432,10 +487,61 @@ function buildCustomizeSection(title, items, labelField, onRemove, addForm) {
   return details;
 }
 
+// ---- Habit drag-and-drop ----
+
+let dragSourceId = null;
+
+function handleHabitDragStart(e) {
+  dragSourceId = e.currentTarget.dataset.habitId;
+  e.dataTransfer.effectAllowed = "move";
+  setTimeout(() => e.currentTarget.classList.add("dragging"), 0);
+}
+
+function handleHabitDragOver(e) {
+  if (!dragSourceId) return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect = "move";
+  document.querySelectorAll(".edit-habit-row.drag-over").forEach((el) => el.classList.remove("drag-over"));
+  if (e.currentTarget.dataset.habitId !== dragSourceId) {
+    e.currentTarget.classList.add("drag-over");
+  }
+}
+
+function handleHabitDrop(e) {
+  e.preventDefault();
+  const targetId = e.currentTarget.dataset.habitId;
+  const targetGroup = e.currentTarget.dataset.habitGroup;
+  if (!dragSourceId || dragSourceId === targetId) return;
+
+  const sourceIndex = habits.findIndex((h) => h.id === dragSourceId);
+  const targetIndex = habits.findIndex((h) => h.id === targetId);
+  if (sourceIndex === -1 || targetIndex === -1) return;
+
+  // Moving to a different section updates the habit's group so it stays there.
+  const sourceHabit = habits[sourceIndex];
+  if (targetGroup && sourceHabit.group !== targetGroup) {
+    sourceHabit.group = targetGroup;
+  }
+
+  const [moved] = habits.splice(sourceIndex, 1);
+  habits.splice(targetIndex, 0, moved);
+
+  saveHabitsConfig();
+  dragSourceId = null;
+  renderAll();
+}
+
+function handleHabitDragEnd(e) {
+  e.currentTarget.classList.remove("dragging");
+  document.querySelectorAll(".edit-habit-row.drag-over").forEach((el) => el.classList.remove("drag-over"));
+  dragSourceId = null;
+}
+
 // A single row inside a customize section.
-function buildConfigRow(item, labelField, onRemove) {
+function buildConfigRow(item, labelField, onRemove, onToggle = null) {
   const row = document.createElement("div");
   row.className = "edit-habit-row";
+  if (item.disabled) row.classList.add("is-disabled");
 
   const emojiEl = document.createElement("span");
   emojiEl.className = "edit-habit-emoji";
@@ -453,7 +559,32 @@ function buildConfigRow(item, labelField, onRemove) {
   delBtn.textContent = "x";
   delBtn.addEventListener("click", () => onRemove(item.id));
 
-  row.append(emojiEl, nameEl, delBtn);
+  if (onToggle) {
+    const handle = document.createElement("span");
+    handle.className = "drag-handle";
+    handle.setAttribute("aria-hidden", "true");
+    handle.textContent = "⠿";
+
+    const toggleBtn = document.createElement("button");
+    toggleBtn.className = "toggle-habit-button";
+    toggleBtn.type = "button";
+    toggleBtn.textContent = item.disabled ? "Show" : "Hide";
+    toggleBtn.setAttribute("aria-label", `${item.disabled ? "Show" : "Hide"} ${item[labelField]}`);
+    toggleBtn.addEventListener("click", () => onToggle(item.id));
+
+    row.draggable = true;
+    row.dataset.habitId = item.id;
+    row.dataset.habitGroup = item.group || "am";
+    row.addEventListener("dragstart", handleHabitDragStart);
+    row.addEventListener("dragover", handleHabitDragOver);
+    row.addEventListener("drop", handleHabitDrop);
+    row.addEventListener("dragend", handleHabitDragEnd);
+
+    row.append(handle, emojiEl, nameEl, toggleBtn, delBtn);
+  } else {
+    row.append(emojiEl, nameEl, delBtn);
+  }
+
   return row;
 }
 
@@ -678,9 +809,19 @@ function buildTestingSection() {
   return details;
 }
 
+// Toggle a habit's visible/hidden state without deleting it.
+function toggleHabit(id) {
+  const habit = habits.find((h) => h.id === id);
+  if (!habit) return;
+  habit.disabled = !habit.disabled;
+  saveHabitsConfig();
+  initFlowStep();
+  renderAll();
+}
+
 // Add a brand new habit to the config list.
-function addHabit(name, emoji) {
-  habits.push(createHabitModel(name, emoji));
+function addHabit(name, emoji, group = "am") {
+  habits.push(createHabitModel(name, emoji, group));
   saveHabitsConfig();
   initFlowStep();
   renderAll();

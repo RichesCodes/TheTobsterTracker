@@ -143,6 +143,11 @@ function getActivityMoodScores(days, activityId, didActivity) {
     .map((day) => getMood(day.entry.mood).score);
 }
 
+// Return only habits the user hasn't hidden, in their saved array order.
+function getActiveHabits() {
+  return habits.filter((h) => !h.disabled);
+}
+
 // Right now all configured activities are visible every day.
 function getVisibleActivities(entry) {
   return activities;
